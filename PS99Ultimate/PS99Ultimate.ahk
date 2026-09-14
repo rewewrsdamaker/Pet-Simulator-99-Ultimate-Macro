@@ -1,7 +1,7 @@
-﻿#Requires AutoHotkey v2.0
+#Requires AutoHotkey v2.0
 #SingleInstance Force
-CoordMode("Mouse", "Screen")
-CoordMode("Pixel", "Screen")
+CoordMode("Mouse", "Client")
+CoordMode("Pixel", "Client")
 
 #Include Paths\ToEgg6.ahk
 #Include Paths\ToEgg7.ahk
@@ -211,14 +211,14 @@ WaitForLoadingScreen() {
     
     detectTimeout := A_TickCount + 10000
     while (isRunning && A_TickCount < detectTimeout) {
-        if ImageSearch(&foundX, &foundY, 0, 0, A_ScreenWidth, A_ScreenHeight, "C:\Users\samuele\Desktop\Ps99 Ultimate\Paths\ReconnectDetector.png") {
+        if ImageSearch(&foundX, &foundY, 0, 0, A_ScreenWidth, A_ScreenHeight, "Paths\ReconnectDetector.png") {
             break
         }
         PreciseSleep(300)
     }
     
     while (isRunning && A_TickCount < timeout) {
-        if (!ImageSearch(&foundX, &foundY, 0, 0, A_ScreenWidth, A_ScreenHeight, "C:\Users\samuele\Desktop\Ps99 Ultimate\Paths\ReconnectDetector.png")) {
+        if (!ImageSearch(&foundX, &foundY, 0, 0, A_ScreenWidth, A_ScreenHeight, "Paths\ReconnectDetector.png")) {
             UpdateStatus("Loading screen cleared!")
             PreciseSleep(1500)
             return true
@@ -234,7 +234,7 @@ CheckDisconnect() {
     if (!isRunning || !chkAutoRejoin.Value)
         return
         
-    if (!WinExist("Roblox") || ImageSearch(&foundX, &foundY, 0, 0, A_ScreenWidth, A_ScreenHeight, "C:\Users\samuele\Desktop\Ps99 Ultimate\Paths\DisconnectDetector.png")) {
+    if (!WinExist("Roblox") || ImageSearch(&foundX, &foundY, 0, 0, A_ScreenWidth, A_ScreenHeight, "Paths\DisconnectDetector.png")) {
         UpdateStatus("Disconnect screen or crash detected! Reconnecting...")
         isHatchingState := false
         initialized := false
@@ -257,7 +257,12 @@ CheckDisconnect() {
             UpdateStatus("Waiting for initial menu screen...")
             PreciseSleep(1500)
             
-            MouseMove(940, 656 + 10, 20)
+            if WinExist("Roblox") {
+                WinGetPos(&wx, &wy, &ww, &wh, "Roblox")
+                MouseMove(Integer(ww * 0.49), Integer(wh * 0.61), 20)
+            } else {
+                MouseMove(940, 656, 20)
+            }
             PreciseSleep(150)
             Click("down")
             PreciseSleep(100)
@@ -331,7 +336,12 @@ MainMacroLoop() {
             UpdateStatus("Waiting for initial menu screen...")
             PreciseSleep(1500)
             
-            MouseMove(940, 656 + 10, 20)
+            if WinExist("Roblox") {
+                WinGetPos(&wx, &wy, &ww, &wh, "Roblox")
+                MouseMove(Integer(ww * 0.49), Integer(wh * 0.61), 20)
+            } else {
+                MouseMove(940, 656, 20)
+            }
             PreciseSleep(150)
             Click("down")
             PreciseSleep(100)
@@ -361,7 +371,12 @@ MainMacroLoop() {
         lastHatchTick := currentTime
         UpdateStatus("Hatching egg click.")
         
-        MouseMove(960, 713, 20)
+        if WinExist("Roblox") {
+            WinGetPos(&wx, &wy, &ww, &wh, "Roblox")
+            MouseMove(Integer(ww * 0.5), Integer(wh * 0.66), 20)
+        } else {
+            MouseMove(960, 713, 20)
+        }
         PreciseSleep(100)
         Click("down")
         PreciseSleep(100)
@@ -432,7 +447,7 @@ RunPath(pathArray, pauseAfterStep := 0) {
         PreciseSleep(500)
         
         WinGetPos(&wx, &wy, &ww, &wh, targetWin)
-        Click(wx + (ww // 2), wy + 35)
+        Click(ww // 2, 35)
         PreciseSleep(500)
     }
     
@@ -454,7 +469,7 @@ RunPath(pathArray, pauseAfterStep := 0) {
                 if (pauseAfterStep == 7 && index == 6) {
                     keyToPress := "Enter"
                 } else if (pauseAfterStep == 7 && index == 7) {
-                    keyToPress := "ù"
+                    keyToPress := "\"
                 } else {
                     keyToPress := HasProp(step, "key") ? step.key : ""
                 }
